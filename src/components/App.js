@@ -1,4 +1,4 @@
-
+import React from 'react';
 import styled from 'styled-components'
 import moment from 'moment'
 import {HeaderBar} from "./HeaderBar";
