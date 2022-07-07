@@ -18,7 +18,6 @@ const DateWrapper = styled.div`
     justify-content: center;
     margin: 2px;
 `;
-
 const CurrentDay = styled.div`
   height: 100%;
   width: 100%;
@@ -29,13 +28,11 @@ const CurrentDay = styled.div`
   justify-content: center;
 
 `;
-
 const RowInCell = styled.div`
     display: flex;
     justify-content: ${props => props.justifyContent ? props.justifyContent : 'flex-start'};
     ${props => props.pr && `padding-right: ${props.pr * 8}px`}
 `;
-
 const CellWrapper = styled.div`
   min-width: 100px;
   min-height: ${props => props.isHeader ? 24 : 80}px;
@@ -45,10 +42,10 @@ const CellWrapper = styled.div`
                     :props.isWeekend ? '#828083' : '#131314'}; 
 `;
 
-export const CalendarGrid = ({startDay}) => {
+export const CalendarGrid = ({startDay, daysToDisplay}) => {
     const startDayOfView = startDay.clone().startOf('month').startOf('week');
     const dayPtr = startDayOfView.clone();
-    const days = [...Array(42)].map(() => {
+    const days = [...Array(daysToDisplay)].map(() => {
         let ret = dayPtr.clone();
         dayPtr.add(1, 'day');
         return ret;

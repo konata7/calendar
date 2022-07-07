@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import styled from 'styled-components'
 import moment from 'moment'
 import {HeaderBar} from "./HeaderBar";
@@ -16,7 +16,8 @@ const AppWrapper = styled.div`
       overflow: hidden;
       box-shadow: 0 0 0 1px #1A1A1A, 0 8px 20px 6px #889;
     `
-
+const dbUrl = 'http://localhost:3001'
+const daysToDisplay = 42
 
 function App() {
 
@@ -28,6 +29,18 @@ function App() {
     const nextMonthHandler = () => setStartDay(prev    => prev.clone().add(1, 'month'));
 
     window.moment = moment;
+    const firstDisplayedDay = startDay.clone().startOf('week');
+    const lastDisplayedDay = firstDisplayedDay.clone().add(daysToDisplay - 1, 'days');
+    const [events, setEvents] = useState([])
+    useEffect(() => {
+        fetch(`${dbUrl}/events?datetime_gte=${firstDisplayedDay.unix()}&datetime_lte=${lastDisplayedDay.unix()}`)
+            .then(resp => resp.json())
+            .then(resp => {
+                console.log('responce: ', resp, lastDisplayedDay, firstDisplayedDay);
+                setEvents(resp);
+            });
+    }, []);
+
     return (
         <AppWrapper>
             <HeaderBar/>
@@ -37,7 +50,7 @@ function App() {
                 todayHandler={todayHandler}
                 nextMonthHandler={nextMonthHandler}
             />
-            <CalendarGrid startDay={startDay}/>
+            <CalendarGrid startDay={startDay} daysToDisplay={daysToDisplay}/>
         </AppWrapper>
     );
 }
