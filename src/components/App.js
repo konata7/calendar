@@ -15,6 +15,9 @@ const AppWrapper = styled.div`
       border-bottom: 1px solid #F4F4F9;
       overflow: hidden;
       box-shadow: 0 0 0 1px #1A1A1A, 0 8px 20px 6px #889;
+  
+      width: 100%;
+      max-width: 1406px;
     `
 const dbUrl = 'http://localhost:3001'
 const daysToDisplay = 42
@@ -39,7 +42,8 @@ function App() {
                 console.log('responce: ', resp, lastDisplayedDay, firstDisplayedDay);
                 setEvents(resp);
             });
-    }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [startDay]);
 
     return (
         <AppWrapper>
@@ -50,7 +54,7 @@ function App() {
                 todayHandler={todayHandler}
                 nextMonthHandler={nextMonthHandler}
             />
-            <CalendarGrid startDay={startDay} daysToDisplay={daysToDisplay}/>
+            <CalendarGrid startDay={startDay} daysToDisplay={daysToDisplay} events={events}/>
         </AppWrapper>
     );
 }
