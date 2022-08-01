@@ -17,6 +17,7 @@ const DateWrapper = styled.div`
   align-items: center;
   justify-content: center;
   margin: 2px;
+  cursor: pointer;
 `;
 const CurrentDay = styled.div`
   height: 100%;
@@ -56,6 +57,7 @@ const EventWrapper = styled.div`
   text-overflow: ellipsis;
   
 `;
+// noinspection CssInvalidPropertyValue
 const EventButton = styled.button`
   width: -webkit-fill-available;
   width: -moz-available;
@@ -71,7 +73,7 @@ const EventButton = styled.button`
   padding-right: 8px;
   background-color: #f2dff7;
 `;
-export const CalendarGrid = ({startDay, daysToDisplay, events}) => {
+export const CalendarGrid = ({startDay, daysToDisplay, events, eventHandler}) => {
   const startDayOfView = startDay.clone().startOf('month').startOf('week');
   const dayPtr = startDayOfView.clone();
   const days = [...Array(daysToDisplay)].map(() => {
@@ -97,7 +99,7 @@ export const CalendarGrid = ({startDay, daysToDisplay, events}) => {
         </GridWrapper>
         <GridWrapper>
           {
-            days.map((dayInstance) => (
+            days.map((dayInstance, i) => (
                 <CellWrapper
                     key={dayInstance.unix()}
                     isWeekend={dayInstance.day() === 6 || dayInstance.day() === 0}
@@ -106,7 +108,7 @@ export const CalendarGrid = ({startDay, daysToDisplay, events}) => {
                   <RowInCell
                       justifyContent={'flex-end'}
                   >
-                    <DateWrapper>
+                    <DateWrapper data-index={i} onDoubleClick={(e)=>{eventHandler('Create', e.clientX, e.clientY, e.target.dataset.index); console.log(e)}}>
                       {!isCurrentDay(dayInstance)
                           ? dayInstance.format('D')
                           : <CurrentDay>{dayInstance.format('D')}</CurrentDay>
@@ -128,11 +130,12 @@ export const CalendarGrid = ({startDay, daysToDisplay, events}) => {
                         }
 
                         return eventsToShow;
-                      }, []).map((event) => <RowInCell justifyContent={'space-around'}>
-                        <EventButton>
-                          <EventWrapper>{event.title}</EventWrapper>
-                        </EventButton>
-                      </RowInCell>)
+                      }, []).map((event,i) =>
+                          <RowInCell key={`${event.datetime}ev${i}`} justifyContent={'space-around'}>
+                            <EventButton onDoubleClick={(e)=>{eventHandler('Update', e.clientX, e.clientY, undefined, event)}}>
+                                <EventWrapper>{event.title}</EventWrapper>
+                            </EventButton>
+                          </RowInCell>)
 
                     }
                   </EventBlockWrapper>
