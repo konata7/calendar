@@ -32,19 +32,23 @@ const EventFormBgWrapper = styled.div`
 const EventFormWrapper = styled(AppWrapper)`
   background-color: lightgrey;
   color: black;
-  width: 15vw;
+  width: min-content;
+  min-width: 20vw;
+  max-width: 50vw;
   position: fixed;
   top: ${props => props.cursorPos.y}px;
   left: ${props => props.cursorPos.x}px;
   border-radius: .2vw;
 `;
-const EventInput = styled.input`
-  padding: 4px 14px;
+const EventInput = styled.textarea`
+  padding: 8px 14px;
   font-size: .85rem;
   width: 100%;
   outline: unset;
   border: unset;
   border-bottom: 1px solid lightgrey;
+  resize: none;
+  height: 60px;
 `;
 const ButtonsWrapper = styled.div`
   padding: 8px 14px;
@@ -125,15 +129,28 @@ function App() {
     }).then(res => res.json()).then(res => {
       console.log(res);
       if (method === 'Update') {
-        setEvents(prevState => [prevState.map(eventEl => eventEl.id === res.id ? res.id : eventEl)]);
+        setEvents(prevState => prevState.map(eventEl => eventEl.id === res.id ? res : eventEl));
       } else {
         setEvents(prevState => [...prevState, res]);
       }
-
+    cancelButtonHandler();
     });
-
   }
+  const eventRemoveHandler = () => {
+    const fetchUrl =  `${dbUrl}/events/${event.id}`;
+    const httpMethod = 'DELETE';
 
+    fetch(fetchUrl, {
+      method: httpMethod,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    }).then(res => res.json()).then(res => {
+      console.log(res);
+      setEvents(prevState => prevState.filter(eventEl => eventEl.id !== event.id));
+      cancelButtonHandler();
+    });
+  }
   return (
       <>
         {
@@ -143,14 +160,17 @@ function App() {
                   <EventInput
                       value={event.title}
                       onChange={(e) => changeEventHandler(e.target.value, 'title')}
+                      placeholder='Title'
                   />
                   <EventInput
                       value={event.description}
                       onChange={(e) => changeEventHandler(e.target.value, 'description')}
+                      placeholder='Description'
                   />
                   <ButtonsWrapper>
                     <button onClick={cancelButtonHandler}>Cancel</button>
                     <button onClick={eventFetchHandler}>{method}</button>
+                    {method === 'Update' ? (<button onClick={eventRemoveHandler}>Remove</button>) : null}
                   </ButtonsWrapper>
                 </EventFormWrapper>
               </EventFormBgWrapper>
