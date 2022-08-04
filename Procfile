@@ -1,0 +1,1 @@
+web: npm run start & npm run serve & wait -n;
